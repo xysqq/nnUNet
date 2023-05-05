@@ -12,15 +12,16 @@
 #    See the License for the specific language governing permissions and
 #    limitations under the License.
 
-import os
-
 """
 PLEASE READ paths.md FOR INFORMATION TO HOW TO SET THIS UP
 """
 
-nnUNet_raw = os.environ.get('nnUNet_raw')
-nnUNet_preprocessed = os.environ.get('nnUNet_preprocessed')
-nnUNet_results = os.environ.get('nnUNet_results')
+# nnUNet_raw = os.environ.get('nnUNet_raw')
+# nnUNet_preprocessed = os.environ.get('nnUNet_preprocessed')
+# nnUNet_results = os.environ.get('nnUNet_results')
+nnUNet_raw = "/home/xys/nnUNet/nnUNet_raw"
+nnUNet_preprocessed = "/home/xys/nnUNet/nnUNet_preprocessed"
+nnUNet_results = "/home/xys/nnUNet/nnUNet_results"
 
 if nnUNet_raw is None:
     print("nnUNet_raw is not defined and nnU-Net can only be used on data for which preprocessed files "
