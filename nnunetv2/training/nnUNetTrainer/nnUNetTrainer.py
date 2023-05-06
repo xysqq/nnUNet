@@ -7,6 +7,7 @@ from copy import deepcopy
 from datetime import datetime
 from time import time, sleep
 from typing import Union, Tuple, List
+import random
 
 import numpy as np
 import torch
@@ -60,6 +61,7 @@ from torch import distributed as dist
 from torch.cuda import device_count
 from torch.cuda.amp import GradScaler
 from torch.nn.parallel import DistributedDataParallel as DDP
+from pathlib import Path
 
 
 class nnUNetTrainer(object):
@@ -519,13 +521,38 @@ class nnUNetTrainer(object):
                 self.print_to_log_file("Creating new 5-fold cross-validation split...")
                 splits = []
                 all_keys_sorted = np.sort(list(dataset.keys()))
-                kfold = KFold(n_splits=5, shuffle=True, random_state=12345)
-                for i, (train_idx, test_idx) in enumerate(kfold.split(all_keys_sorted)):
-                    train_keys = np.array(all_keys_sorted)[train_idx]
-                    test_keys = np.array(all_keys_sorted)[test_idx]
+
+                patient_id_list = sorted(set(key.split('_')[0] for key in dataset.keys()))
+                n = len(patient_id_list)
+                for start_index in [0, 0.2, 0.4, 0.6, 0.8]:
+                    if start_index == 0.8:
+                        train_patient_id_list = patient_id_list[:int(start_index * n)]
+                        test_patient_id_list = patient_id_list[int(start_index * n):]
+                    else:
+                        train_patient_id_list = patient_id_list[:int(start_index * n)] + patient_id_list[
+                                                                                         int((start_index + 0.2) * n):]
+                        test_patient_id_list = patient_id_list[int(start_index * n):int((start_index + 0.2) * n)]
+
+                    train_keys = [key for key in dataset.keys() if key.split('_')[0] in train_patient_id_list]
+                    test_keys = [key for key in dataset.keys() if key.split('_')[0] in test_patient_id_list]
+
+                    state = random.getstate()
+                    random.seed(42)
+                    random.shuffle(train_keys)
+                    random.shuffle(test_keys)
+                    random.setstate(state)
+
                     splits.append({})
-                    splits[-1]['train'] = list(train_keys)
-                    splits[-1]['val'] = list(test_keys)
+                    splits[-1]['train'] = train_keys
+                    splits[-1]['val'] = test_keys
+
+                # kfold = KFold(n_splits=5, shuffle=True, random_state=12345)
+                # for i, (train_idx, test_idx) in enumerate(kfold.split(all_keys_sorted)):
+                #     train_keys = np.array(all_keys_sorted)[train_idx]
+                #     test_keys = np.array(all_keys_sorted)[test_idx]
+                #     splits.append({})
+                #     splits[-1]['train'] = list(train_keys)
+                #     splits[-1]['val'] = list(test_keys)
                 save_json(splits, splits_file)
 
             else:
@@ -1211,7 +1238,8 @@ class nnUNetTrainer(object):
                                                 self.label_manager.foreground_labels,
                                                 self.label_manager.ignore_label, chill=True)
             self.print_to_log_file("Validation complete", also_print_to_console=True)
-            self.print_to_log_file("Mean Validation Dice: ", (metrics['foreground_mean']["Dice"]), also_print_to_console=True)
+            self.print_to_log_file("Mean Validation Dice: ", (metrics['foreground_mean']["Dice"]),
+                                   also_print_to_console=True)
 
         self.set_deep_supervision_enabled(True)
         compute_gaussian.cache_clear()
