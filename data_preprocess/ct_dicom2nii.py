@@ -1,4 +1,5 @@
 import logging
+import os
 import platform
 import time
 from glob import glob
@@ -10,7 +11,6 @@ from tqdm import tqdm
 
 from utils.utils_dicom import load_rtstruct_file, get_patient_id_from_dicom
 from utils.utils_file_conversion import dicom2nifti, img2nifti
-from utils.utils_file_ops import remove_and_make_dirs
 
 if __name__ == '__main__':
     # 创建logger对象
@@ -32,8 +32,8 @@ if __name__ == '__main__':
     else:
         data_dir = "/home/xys/Data"
     out_dir = f"../nnUNet_raw/Dataset003_CT_raw"
-    remove_and_make_dirs(f'{out_dir}/imagesTr')
-    remove_and_make_dirs(f'{out_dir}/labelsTr')
+    os.makedirs(f'{out_dir}/imagesTr', exist_ok=True)
+    os.makedirs(f'{out_dir}/labelsTr', exist_ok=True)
     logger.info(f"输出路径为{out_dir}")
 
     # 读取映射表

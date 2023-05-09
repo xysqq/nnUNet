@@ -1,4 +1,5 @@
 import logging
+import os
 import platform
 import time
 from glob import glob
@@ -7,21 +8,9 @@ import mmcv
 import numpy as np
 from tqdm import tqdm
 
-from utils.utils_dicom import ct_dicom2img, load_rtstruct_file, get_patient_id_from_dicom
-import platform
-import time
-from glob import glob
-from pathlib import Path
-
-import mmcv
-import numpy as np
-from tqdm import tqdm
-
-from utils.utils_dicom import ct_dicom2img, load_rtstruct_file, get_patient_id_from_dicom
-from utils.utils_file_ops import get_roi_names_selected, save_json_data_list, remove_and_make_dirs
-from utils.utils_image_matching import load_dicom_volumes, match_ct_and_mri
+from utils.utils_dicom import load_rtstruct_file, get_patient_id_from_dicom
+from utils.utils_image_matching import load_dicom_volumes
 from utils.utils_image_registration import ct_and_mri_registered_simple_elastix
-from utils.utils_labelme import mask2shapes
 
 if __name__ == '__main__':
     # 创建logger对象
@@ -44,6 +33,8 @@ if __name__ == '__main__':
         data_dir = "/home/xys/Data"
 
     out_dir = f"../nnUNet_raw/Dataset002_CT_MRI"
+    os.makedirs(f'{out_dir}/imagesTr', exist_ok=True)
+    os.makedirs(f'{out_dir}/labelsTr', exist_ok=True)
     logger.info(f"原数据集的路径为{data_dir}/npc，输出路径为{out_dir}")
 
     # 读取映射表

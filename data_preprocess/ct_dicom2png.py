@@ -1,4 +1,5 @@
 import logging
+import os
 import platform
 import time
 from glob import glob
@@ -30,6 +31,8 @@ if __name__ == '__main__':
         data_dir = "/home/xys/Data"
     images_ct_dir = f"{data_dir}/images_ct"
     out_dir = f"../nnUNet_raw/Dataset001_CT"
+    os.makedirs(f'{out_dir}/imagesTr', exist_ok=True)
+    os.makedirs(f'{out_dir}/labelsTr', exist_ok=True)
     logger.info(f"原数据集的路径为{images_ct_dir}，输出路径为{out_dir}")
 
     # 读取映射表
