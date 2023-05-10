@@ -97,7 +97,7 @@ def _load_mri_dicom_volumes(mri_dicom_dir):
     return np.stack(mri_volumes, axis=2)
 
 
-def dicom2img(origin, input_type='ds', center=None, width=None):
+def dicom2img(origin, input_type='ds', center=None, width=None, astype='float32'):
     """
     ds -> img (ndarray in 8 bit; RGB format if it's color image)
     oirigin: dicomIO or dicom file path
@@ -140,7 +140,7 @@ def dicom2img(origin, input_type='ds', center=None, width=None):
     #################
     pixel_array = _pixel_process(ds, pixel_array, center=center, width=width)
 
-    return pixel_array
+    return pixel_array.astype(astype)
 
 
 def _is_unsupported(ds):
