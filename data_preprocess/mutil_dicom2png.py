@@ -10,7 +10,7 @@ from tqdm import tqdm
 
 from utils.utils_dicom import load_rtstruct_file, get_patient_id_from_dicom
 from utils.utils_image_matching import load_dicom_volumes
-from utils.utils_image_registration import ct_and_mri_registered_simple_elastix
+from utils.utils_image_registration import register_images
 
 if __name__ == '__main__':
     # 创建logger对象
@@ -68,7 +68,7 @@ if __name__ == '__main__':
         ct_volumes, mri_volumes, ct_dicom_path_list, start_index = load_dicom_volumes(ct_dicom_dir,
                                                                                       mri_dicom_dirs,
                                                                                       ct_structure)
-        result_volumes, _ = ct_and_mri_registered_simple_elastix(ct_volumes, mri_volumes)
+        result_volumes, _ = register_images(ct_volumes, mri_volumes)
 
         # 靶区的mask读取
         target_masks = {}
@@ -82,7 +82,8 @@ if __name__ == '__main__':
         for idx, file_dateset in enumerate(rtstruct.series_data):
             ct_dicom_path = file_dateset.filename
             slice_location = file_dateset.SliceLocation
-            if slice_location < -150 or slice_location > 108:
+
+            if slice_location < -150 or slice_location > 108 or ct_dicom_path not in ct_dicom_path_list:
                 continue
 
             ct_image = ct_volumes[..., idx - start_index]
