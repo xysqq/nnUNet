@@ -79,7 +79,7 @@ if __name__ == '__main__':
         label_3d = np.zeros((height, width, num_slices))
 
         # 逐切片处理
-        i = 0
+        nums = 0
         for idx, file_dateset in enumerate(rtstruct.series_data):
             ct_dicom_path = file_dateset.filename
             slice_location = file_dateset.SliceLocation
@@ -97,9 +97,9 @@ if __name__ == '__main__':
                 class_seg = np.where(
                     class_seg > 0, class_seg, mask * (i + 1))
 
-            image_3d[..., i] = image
-            label_3d[..., i] = class_seg
-            i += 1
+            image_3d[..., nums] = image
+            label_3d[..., nums] = class_seg
+            nums += 1
 
         img2nifti(image_3d, f"{out_dir}/imagesTr/{patient_id}_{num_training}_0000.nii.gz")
         img2nifti(label_3d, f"{out_dir}/labelsTr/{patient_id}_{num_training}.nii.gz")
