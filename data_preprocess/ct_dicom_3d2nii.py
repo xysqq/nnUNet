@@ -40,7 +40,7 @@ if __name__ == '__main__':
         ' '.join(x.strip().split()[:-1]): x.strip().split(' ')[-1].strip()
         for x in open(rf"{data_dir}/label_target.txt", encoding='utf-8').readlines()
     }
-    category_list = ['GTV', 'GTVnd', 'CTVnd', 'CTV1', 'CTV2']
+    category_list = ['GTV', 'GTVnd', 'CTV1', 'CTV2']
     logger.info(f"映射表为{category_map}\n列表为{category_list}")
     dataset_json = {"channel_names": {
         "0": "CT_3d",
