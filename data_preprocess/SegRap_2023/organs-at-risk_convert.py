@@ -21,7 +21,7 @@ if __name__ == '__main__':
     labels_path_list = glob(f"{labels_dir}/Task001/*")
     for image_path, label_path in tqdm(zip(images_path_list, labels_path_list)):
         image_id = f"{Path(image_path).parent.name}_0000.nii.gz"
-        label_id = f"{Path(label_path).name.split('.')[0]}_0000.nii.gz"
+        label_id = f"{Path(label_path).name.split('.')[0]}.nii.gz"
         copy_file(image_path, f"{out_dir}/imagesTr/{image_id}")
         copy_file(label_path, f"{out_dir}/labelsTr/{label_id}")
 
@@ -29,5 +29,6 @@ if __name__ == '__main__':
         "0": "CT"
     }, "file_ending": ".nii.gz", "overwrite_image_reader_writer": "SimpleITKIO",
         'labels': {category: category_idx for category, category_idx in segrap_task001_one_hot_label_names.items()},
-        'num_training': 120}
+        'numTraining': 120}
+    dataset_json['labels']['background'] = 0
     mmcv.dump(dataset_json, f"{out_dir}/dataset.json")
