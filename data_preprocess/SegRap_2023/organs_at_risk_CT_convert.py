@@ -1,3 +1,4 @@
+import platform
 from glob import glob
 from pathlib import Path
 
@@ -8,12 +9,19 @@ from data_preprocess.SegRap_2023 import segrap_task001_one_hot_label_names
 from utils.utils_file_ops import copy_file
 
 if __name__ == '__main__':
-    data_dir = "/home/xys/Data"
+    if platform.system() == 'Windows':
+        data_dir = "D:/NPC"
+    else:
+        data_dir = "/home/xys/Data"
     images_dir = f"{data_dir}/SegRap2023_Training_Set_120cases"
     labels_dir = f"{data_dir}/SegRap2023_Training_Set_120cases_OneHot_Labels"
     one_hot_label_names_path = f"{labels_dir}/one_hot_label_names.txt"
+    dataset_name = 'Dataset001_organ_at_risk_CT'
 
-    out_dir = "/home/xys/nnUNet/nnUNet_raw/Dataset001_organ_at_risk_CT"
+    if platform.system() == 'Windows':
+        out_dir = f"D:/NPC/nnUNet_raw/{dataset_name}"
+    else:
+        out_dir = f"/home/xys/nnUNet/nnUNet_raw/{dataset_name}"
     Path(f"{out_dir}/imagesTr").mkdir(parents=True, exist_ok=True)
     Path(f"{out_dir}/labelsTr").mkdir(parents=True, exist_ok=True)
 
